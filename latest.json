@@ -1,0 +1,15 @@
+{
+  "version": "1.0.1",
+
+  "update": {
+    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.1/Compass-Update-1.0.1.exe",
+    "sha256": "UPDATE_FILE_SHA256_HEX"
+  },
+
+  "installer": {
+    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.1/Compass-Setup-1.0.1.exe",
+    "sha256": "0ce877923b7bd2825fda00f9be4379d09a4c8db5dcfdbecf0a0fcb05c6726c29"
+  },
+
+  "force": false
+}
