@@ -1,0 +1,86 @@
+name: Update latest.json on Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download release assets and calculate SHA256
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Release 버전 가져오기 (v 접두사 제거)
+          VERSION_TAG="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION_TAG#v}"
+          
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+          # 에셋 다운로드
+          mkdir -p ./temp_assets
+          gh release download "$VERSION_TAG" -D ./temp_assets
+          
+          # Update 파일 SHA256 계산
+          UPDATE_FILE="./temp_assets/Compass-Update-${VERSION}.exe"
+          if [ -f "$UPDATE_FILE" ]; then
+            UPDATE_SHA256=$(sha256sum "$UPDATE_FILE" | awk '{print $1}')
+          else
+            UPDATE_SHA256="FILE_NOT_FOUND"
+          fi
+          echo "UPDATE_SHA256=$UPDATE_SHA256" >> $GITHUB_ENV
+          
+          # Installer 파일 SHA256 계산
+          INSTALLER_FILE="./temp_assets/Compass-Setup-${VERSION}.exe"
+          if [ -f "$INSTALLER_FILE" ]; then
+            INSTALLER_SHA256=$(sha256sum "$INSTALLER_FILE" | awk '{print $1}')
+          else
+            INSTALLER_SHA256="FILE_NOT_FOUND"
+          fi
+          echo "INSTALLER_SHA256=$INSTALLER_SHA256" >> $GITHUB_ENV
+          
+          # 디버그 출력
+          echo "=== Downloaded files ==="
+          ls -la ./temp_assets/
+          echo "=== Calculated hashes ==="
+          echo "Update SHA256: $UPDATE_SHA256"
+          echo "Installer SHA256: $INSTALLER_SHA256"
+
+      - name: Update latest.json
+        run: |
+          cat > latest.json << 'EOF'
+          {
+            "version": "${{ env.VERSION }}",
+            "update": {
+              "url": "https://github.com/${{ github.repository }}/releases/download/${{ env.VERSION_TAG }}/Compass-Update-${{ env.VERSION }}.exe",
+              "sha256": "${{ env.UPDATE_SHA256 }}"
+            },
+            "installer": {
+              "url": "https://github.com/${{ github.repository }}/releases/download/${{ env.VERSION_TAG }}/Compass-Setup-${{ env.VERSION }}.exe",
+              "sha256": "${{ env.INSTALLER_SHA256 }}"
+            },
+            "force": false
+          }
+          EOF
+          sed -i 's/^          //' latest.json
+          
+          echo "=== Updated latest.json ==="
+          cat latest.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add latest.json
+          git diff --staged --quiet || git commit -m "chore: update latest.json for ${{ env.VERSION_TAG }}"
+          git push
