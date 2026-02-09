@@ -1,7 +1,7 @@
 {
   "version": "1.038",
   "update": {
-    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.038/Compass-Update-1.038.exe",
+    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.038/Compass-Update-1.0.38.exe",
     "sha256": "FILE_NOT_FOUND"
   },
   "installer": {
