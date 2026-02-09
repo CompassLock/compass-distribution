@@ -1,12 +1,12 @@
 {
-  "version": "1.0.38",
+  "version": "1.0.49",
   "update": {
-    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.38/Compass-Update-1.0.38.exe",
+    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.49/Compass-Update-1.0.49.exe",
     "sha256": "FILE_NOT_FOUND"
   },
   "installer": {
-    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.38/Compass-Setup-1.0.38.exe",
-    "sha256": "5a7d3cc76c720a05412889ae0bf1d55c04ccdcaedd8514f6a00d22168737757b"
+    "url": "https://github.com/CompassLock/compass-distribution/releases/download/v1.0.49/Compass-Setup-1.0.49.exe",
+    "sha256": "d94128b81bd40718ae4ef1af42d0e88b1cc77dbed9ed537bc7b3abd069304259"
   },
   "force": false
 }
